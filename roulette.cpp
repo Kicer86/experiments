@@ -34,6 +34,7 @@ Colour colourForNumber(int n)
         assert(!"n is out of scope");
 }
 
+
 int main()
 {
     std::random_device rd;
@@ -43,6 +44,9 @@ int main()
     int cash_spent = 0;
     int cash_won = 0;
     int bet = 1;
+    int max_bet = 0;
+    int run = 0;
+    int longest_run = 0;
     constexpr int tries = 1000000;
 
     int histo[37];
@@ -58,15 +62,19 @@ int main()
         const int n = dist(mt);
         const Colour c = colourForNumber(n);
 
+        run++;
         histo[n]++;
         c_histo[c]++;
 
         cash_spent += bet;
+        max_bet = std::max(max_bet, bet);
+        longest_run = std::max(longest_run, run);
 
         if (c == Colour::Red)   // won!  get twice as bet, start beting from 1
         {
             cash_won += bet *2;
             bet = 1;
+            run = 0;
         }
         else
             bet *= 2;          // we lose, double the bet
@@ -75,6 +83,8 @@ int main()
     std::cout << "won:   " << cash_won << std::endl;
     std::cout << "spent: " << cash_spent << std::endl;
     std::cout << "income: " << cash_won - cash_spent << std::endl;
+    std::cout << "max bet: " << max_bet << std::endl;
+    std::cout << "longest run: " << longest_run << std::endl;
 
     for (int i = 0; i < 37; i++)
         std::cout << "Number " << i << ": " << histo[i] * 100.0 / tries << "%" << std::endl;
